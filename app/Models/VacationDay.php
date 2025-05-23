@@ -27,6 +27,11 @@ class VacationDay extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function vacationRequest()
+    {
+        return $this->belongsTo(VacationRequest::class);
+    }
+
     /**
      * Calcular el balance de días disponibles
      */

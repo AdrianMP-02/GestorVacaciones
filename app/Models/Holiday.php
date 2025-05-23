@@ -44,4 +44,10 @@ class Holiday extends Model
             })
             ->exists();
     }
+
+    // Si los días festivos pueden ser específicos por departamento
+    public function departments()
+    {
+        return $this->belongsToMany(Department::class);
+    }
 }

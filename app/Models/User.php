@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\VacationRequest;
 
 class User extends Authenticatable
 {
@@ -47,14 +48,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * Obtener el rol del usuario
-     */
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
-    }
-
-    /**
      * Obtener el departamento del usuario
      */
     public function department()
@@ -63,19 +56,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Obtener el supervisor del usuario
+     * Obtener el rol del usuario
      */
-    public function supervisor()
+    public function role()
     {
-        return $this->belongsTo(User::class, 'supervisor_id');
-    }
-
-    /**
-     * Obtener los subordinados del usuario
-     */
-    public function subordinates()
-    {
-        return $this->hasMany(User::class, 'supervisor_id');
+        return $this->belongsTo(Role::class);
     }
 
     /**
@@ -87,14 +72,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Obtener las solicitudes que este usuario debe aprobar
-     */
-    public function requestsToApprove()
-    {
-        return $this->hasMany(VacationRequest::class, 'approver_id');
-    }
-
-    /**
      * Obtener los días de vacaciones del usuario
      */
     public function vacationDays()
@@ -103,11 +80,27 @@ class User extends Authenticatable
     }
 
     /**
+     * Obtener las notificaciones del usuario
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    /**
+     * Obtener el departamento que este usuario maneja
+     */
+    public function managedDepartment()
+    {
+        return $this->hasOne(Department::class, 'manager_id');
+    }
+
+    /**
      * Verificar si el usuario es administrador
      */
     public function isAdmin()
     {
-        return $this->role->name === 'admin';
+        return $this->role && $this->role->name === 'admin';
     }
 
     /**
@@ -115,7 +108,7 @@ class User extends Authenticatable
      */
     public function isManager()
     {
-        return $this->role->name === 'manager';
+        return $this->role && $this->role->name === 'manager';
     }
 
     /**
@@ -123,6 +116,6 @@ class User extends Authenticatable
      */
     public function isEmployee()
     {
-        return $this->role->name === 'employee';
+        return $this->role && $this->role->name === 'employee';
     }
 }
